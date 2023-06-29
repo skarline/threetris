@@ -8,13 +8,12 @@ export interface BlockProps
 
 const colors = [
   "#000000",
-  "#FF0000",
-  "#00FF00",
-  "#0000FF",
   "#FFFF00",
   "#00FFFF",
-  "#FF00FF",
-  "#FFFFFF",
+  "#FFA500",
+  "#0000FF",
+  "#00FF00",
+  "#FF0000",
 ]
 
 export function Block({ type, size, ...rest }: BlockProps) {

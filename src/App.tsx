@@ -1,12 +1,12 @@
 import { Canvas } from "@react-three/fiber"
 
-import { Matrix } from "./components/Matrix"
+import { Board } from "./components/Board"
 
 function App() {
   return (
     <Canvas orthographic>
       <ambientLight />
-      <Matrix position={[-100, 0, 0]} />
+      <Board />
     </Canvas>
   )
 }

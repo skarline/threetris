@@ -8,9 +8,9 @@ export interface PieceProps
   rotation?: PieceRotation
 }
 
-export function Piece({ tetrimino, rotation = 0 }: PieceProps) {
+export function Piece({ tetrimino, rotation = 0, ...rest }: PieceProps) {
   const { size, facings } = tetrimino
   const data = facings[rotation]
 
-  return <Matrix size={size} data={data} />
+  return <Matrix size={size} data={data} {...rest} />
 }

@@ -17,15 +17,9 @@ export interface MatrixProps extends GroupProps {
   data: number[]
 }
 
-export function Matrix({ size: [columns, rows], data, ...rest }: MatrixProps) {
-  const position: Vector3 = [
-    -0.5 * BLOCK_SIZE * columns,
-    -0.5 * BLOCK_SIZE * rows,
-    0,
-  ]
-
+export function Matrix({ size: [columns], data, ...rest }: MatrixProps) {
   return (
-    <group {...rest} position={position}>
+    <group {...rest}>
       {data.map((type, index) => {
         if (!type) return null
 

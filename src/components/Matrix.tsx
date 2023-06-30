@@ -1,36 +1,26 @@
-import { useMemo, useState } from "react"
-import { Vector3, GroupProps, useFrame } from "@react-three/fiber"
+import { GroupProps } from "@react-three/fiber"
 
 import { Block } from "./Block"
 
 const BLOCK_SIZE = 20
 
-function blockToPosition(index: number, columns: number): [number, number] {
-  const x = (index % columns) * BLOCK_SIZE
-  const y = Math.floor(index / columns) * BLOCK_SIZE
+export interface MatrixProps extends Threetris.Matrix, GroupProps {}
 
-  return [x, y]
-}
-
-export interface MatrixProps extends GroupProps {
-  size: [number, number]
-  data: number[]
-}
-
-export function Matrix({ size: [columns], data, ...rest }: MatrixProps) {
+export function Matrix({ size: [columns], blocks, ...rest }: MatrixProps) {
   return (
     <group {...rest}>
-      {data.map((type, index) => {
+      {blocks.map(({ x, y, type }, index) => {
         if (!type) return null
 
-        const [x, y] = blockToPosition(index, columns)
+        const xPosition = (x - columns / 2 + 0.5) * BLOCK_SIZE
+        const yPosition = (y - 10 / 2 + 0.5) * BLOCK_SIZE
 
         return (
           <Block
             key={index}
             type={type}
             size={BLOCK_SIZE}
-            position={[x, y, 0]}
+            position={[xPosition, yPosition, 0]}
           />
         )
       })}

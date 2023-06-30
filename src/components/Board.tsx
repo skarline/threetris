@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 
 import { Matrix } from "./Matrix"
 import { Piece, PieceRotation } from "./Piece"
@@ -48,7 +48,7 @@ function useRotation(initialValue: PieceRotation = 0) {
 }
 
 export function Board() {
-  const [tetrimino] = useState<Tetrimino | null>(Tetriminos.L)
+  const [tetrimino] = useState<Threetris.Tetrimino | null>(Tetriminos.L)
   const { position, moveLeft, moveRight } = usePosition()
   const { rotation, rotateClockwise, rotateCounterClockwise } = useRotation(0)
 
@@ -61,7 +61,7 @@ export function Board() {
 
   return (
     <group>
-      <Matrix size={[10, 20]} data={[]} />
+      <Matrix size={[10, 20]} blocks={[]} />
       {tetrimino && (
         <Piece tetrimino={tetrimino} rotation={rotation} position={[x, y, 0]} />
       )}

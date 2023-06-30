@@ -2,7 +2,7 @@ import { useCallback, useEffect } from "react"
 
 import { useInputStore } from "../stores/input"
 
-const ActionMap: Record<InputAction, string[]> = {
+const ActionMap: Record<Threetris.Action, string[]> = {
   moveleft: ["ArrowLeft"],
   moveright: ["ArrowRight"],
   rotatecw: ["x"],
@@ -12,7 +12,7 @@ const ActionMap: Record<InputAction, string[]> = {
 function getActionFromKey(key: string) {
   return Object.entries(ActionMap).find(([, keys]) =>
     keys.includes(key)
-  )?.[0] as InputAction | undefined
+  )?.[0] as Threetris.Action | undefined
 }
 
 export function useInput() {
@@ -39,7 +39,10 @@ export function useInput() {
   })
 }
 
-export function useActionPress(actionKey: InputAction, callback: () => void) {
+export function useActionPress(
+  actionKey: Threetris.Action,
+  callback: () => void
+) {
   const action = useInputStore((store) => store.actions[actionKey])
 
   useEffect(() => {
@@ -47,7 +50,10 @@ export function useActionPress(actionKey: InputAction, callback: () => void) {
   }, [action])
 }
 
-export function useActionRelease(actionKey: InputAction, callback: () => void) {
+export function useActionRelease(
+  actionKey: Threetris.Action,
+  callback: () => void
+) {
   const action = useInputStore((store) => store.actions[actionKey])
 
   useEffect(() => {

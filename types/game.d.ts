@@ -15,5 +15,12 @@ declare namespace Threetris {
     facings: Matrix[]
   }
 
+  interface Piece {
+    x: number
+    y: number
+    tetrimino: Tetrimino
+    rotation: PieceRotation
+  }
+
   type Action = "moveleft" | "moveright" | "rotatecw" | "rotateccw"
 }

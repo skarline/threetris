@@ -1,70 +1,47 @@
-import { useCallback, useState } from "react"
-
 import { Matrix } from "./Matrix"
-import { Piece, PieceRotation } from "./Piece"
-import { Tetriminos } from "../constants/tetriminos"
+import { Piece } from "./Piece"
 import { useActionPress } from "../hooks/input"
+import { useGameStore } from "../stores/game"
 
 const blockSize = 20
 
-function usePosition(initialValue: [number, number] = [0, 0]) {
-  const [position, setPosition] = useState<[number, number]>(initialValue)
+function BoardMatrix() {
+  const { size, blocks } = useGameStore((state) => state.matrix)
 
-  const moveLeft = useCallback(() => {
-    setPosition(([x, y]) => [x - 1, y])
-  }, [])
-
-  const moveRight = useCallback(() => {
-    setPosition(([x, y]) => [x + 1, y])
-  }, [])
-
-  return {
-    position,
-    moveLeft,
-    moveRight,
-  }
+  return <Matrix position={[0, 0, 0]} size={size} blocks={blocks} />
 }
 
-function useRotation(initialValue: PieceRotation = 0) {
-  const [rotation, setRotation] = useState<PieceRotation>(initialValue)
+function BoardPiece() {
+  const [piece, move, rotate] = useGameStore((state) => [
+    state.piece,
+    state.move,
+    state.rotate,
+  ])
 
-  const rotateClockwise = useCallback(() => {
-    setRotation((rotation) =>
-      rotation === 3 ? 0 : ((rotation + 1) as PieceRotation)
-    )
-  }, [])
+  useActionPress("moveleft", () => move(-1, 0))
+  useActionPress("moveright", () => move(1, 0))
+  useActionPress("rotatecw", () => rotate(true))
+  useActionPress("rotateccw", () => rotate(false))
 
-  const rotateCounterClockwise = useCallback(() => {
-    setRotation((rotation) =>
-      rotation === 0 ? 3 : ((rotation - 1) as PieceRotation)
-    )
-  }, [])
+  if (!piece) return null
 
-  return {
-    rotation,
-    rotateClockwise,
-    rotateCounterClockwise,
-  }
+  const xPosition = piece.x * blockSize
+  const yPosition = piece.y * blockSize
+
+  return (
+    <Piece
+      position={[xPosition, yPosition, 1]}
+      tetrimino={piece.tetrimino}
+      rotation={piece.rotation}
+    />
+  )
 }
 
 export function Board() {
-  const [tetrimino] = useState<Threetris.Tetrimino | null>(Tetriminos.L)
-  const { position, moveLeft, moveRight } = usePosition()
-  const { rotation, rotateClockwise, rotateCounterClockwise } = useRotation(0)
-
-  useActionPress("moveleft", moveLeft)
-  useActionPress("moveright", moveRight)
-  useActionPress("rotatecw", rotateClockwise)
-  useActionPress("rotateccw", rotateCounterClockwise)
-
-  const [x, y] = position.map((n) => n * blockSize)
-
   return (
     <group>
-      <Matrix size={[10, 20]} blocks={[]} />
-      {tetrimino && (
-        <Piece tetrimino={tetrimino} rotation={rotation} position={[x, y, 0]} />
-      )}
+      <BoardMatrix />
+      <BoardPiece />
     </group>
   )
 }

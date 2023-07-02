@@ -6,14 +6,14 @@ const BLOCK_SIZE = 20
 
 export interface MatrixProps extends Threetris.Matrix, GroupProps {}
 
-export function Matrix({ size: [columns], blocks, ...rest }: MatrixProps) {
+export function Matrix({ blocks, ...rest }: MatrixProps) {
   return (
     <group {...rest}>
       {blocks.map(({ x, y, type }, index) => {
         if (!type) return null
 
-        const xPosition = (x - columns / 2 + 0.5) * BLOCK_SIZE
-        const yPosition = (y - 10 / 2 + 0.5) * BLOCK_SIZE
+        const xPosition = x * BLOCK_SIZE
+        const yPosition = y * BLOCK_SIZE
 
         return (
           <Block

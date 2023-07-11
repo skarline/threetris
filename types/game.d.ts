@@ -22,5 +22,5 @@ declare namespace Threetris {
     rotation: PieceRotation
   }
 
-  type Action = "moveleft" | "moveright" | "rotatecw" | "rotateccw"
+  type Action = "moveleft" | "moveright" | "softdrop" | "rotatecw" | "rotateccw"
 }

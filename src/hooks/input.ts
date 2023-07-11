@@ -1,16 +1,21 @@
-import { useCallback, useEffect } from "react"
+import { useCallback, useEffect, useRef } from "react"
 
 import { useInputStore } from "../stores/input"
+import { useFrame } from "@react-three/fiber"
 
-const ActionMap: Record<Threetris.Action, string[]> = {
+const actionMap: Record<Threetris.Action, string[]> = {
   moveleft: ["ArrowLeft"],
   moveright: ["ArrowRight"],
+  softdrop: ["ArrowDown"],
   rotatecw: ["x"],
   rotateccw: ["z"],
 }
 
+const autoRepeatDelay = 0.3
+const autoRepeatInterval = 0.05
+
 function getActionFromKey(key: string) {
-  return Object.entries(ActionMap).find(([, keys]) =>
+  return Object.entries(actionMap).find(([, keys]) =>
     keys.includes(key)
   )?.[0] as Threetris.Action | undefined
 }
@@ -41,13 +46,33 @@ export function useInput() {
 
 export function useActionPress(
   actionKey: Threetris.Action,
-  callback: () => void
+  callback: () => void,
+  repeat = false
 ) {
   const action = useInputStore((store) => store.actions[actionKey])
+  const repeatTime = useRef<number | null>(null)
 
   useEffect(() => {
-    if (action) callback()
+    if (action) {
+      callback()
+
+      if (repeat) {
+        repeatTime.current = autoRepeatDelay
+      }
+    }
   }, [action])
+
+  useFrame((_, delta) => {
+    if (!action) return
+    if (!repeatTime.current) return
+
+    repeatTime.current -= delta
+
+    if (repeatTime.current <= 0) {
+      repeatTime.current += autoRepeatInterval
+      callback()
+    }
+  })
 }
 
 export function useActionRelease(

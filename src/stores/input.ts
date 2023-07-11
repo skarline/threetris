@@ -1,12 +1,12 @@
 import { create } from "zustand"
 
 interface InputStore {
-  actions: Partial<Record<InputAction, boolean>>
-  toggleAction: (action: InputAction, value: boolean) => void
+  actions: Partial<Record<Threetris.Action, boolean>>
+  toggleAction: (action: Threetris.Action, value: boolean) => void
 }
 
 export const useInputStore = create<InputStore>((set) => ({
   actions: {},
-  toggleAction: (action: InputAction, value: boolean) =>
+  toggleAction: (action: Threetris.Action, value: boolean) =>
     set((state) => ({ actions: { ...state.actions, [action]: value } })),
 }))

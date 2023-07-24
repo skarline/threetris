@@ -10,6 +10,7 @@ const colors = [
   "#000000",
   "#FFFF00",
   "#00FFFF",
+  "#FF00FF",
   "#FFA500",
   "#0000FF",
   "#00FF00",

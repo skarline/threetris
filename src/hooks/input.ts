@@ -1,36 +1,35 @@
 import { useCallback, useEffect, useRef } from "react"
 
-import { useInputStore } from "../stores/input"
+import { getInputState } from "../stores/input"
 import { useFrame } from "@react-three/fiber"
 
-const actionMap: Record<Threetris.Action, string[]> = {
-  moveleft: ["ArrowLeft"],
-  moveright: ["ArrowRight"],
-  softdrop: ["ArrowDown"],
-  rotatecw: ["x"],
-  rotateccw: ["z"],
+const ActionMap: Record<Threetris.Action, string[]> = {
+  MoveLeft: ["ArrowLeft"],
+  MoveRight: ["ArrowRight"],
+  HardDrop: ["Space"],
+  SoftDrop: ["ArrowDown"],
+  RotateCW: ["KeyX", "ArrowUp"],
+  RotateCCW: ["KeyZ"],
 }
 
 const autoRepeatDelay = 0.3
 const autoRepeatInterval = 0.05
 
 function getActionFromKey(key: string) {
-  return Object.entries(actionMap).find(([, keys]) =>
-    keys.includes(key)
+  return Object.entries(ActionMap).find(([, keys]) =>
+    keys.includes(key),
   )?.[0] as Threetris.Action | undefined
 }
 
 export function useInput() {
-  const toggleAction = useInputStore((store) => store.toggleAction)
-
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    const action = getActionFromKey(event.key)
-    if (action) toggleAction(action, true)
+    const action = getActionFromKey(event.code)
+    if (action) getInputState().toggleAction(action, true)
   }, [])
 
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
-    const action = getActionFromKey(event.key)
-    if (action) toggleAction(action, false)
+    const action = getActionFromKey(event.code)
+    if (action) getInputState().toggleAction(action, false)
   }, [])
 
   useEffect(() => {
@@ -47,41 +46,44 @@ export function useInput() {
 export function useActionPress(
   actionKey: Threetris.Action,
   callback: () => void,
-  repeat = false
+  repeat = false,
 ) {
-  const action = useInputStore((store) => store.actions[actionKey])
-  const repeatTime = useRef<number | null>(null)
-
-  useEffect(() => {
-    if (action) {
-      callback()
-
-      if (repeat) {
-        repeatTime.current = autoRepeatDelay
-      }
-    }
-  }, [action])
+  const actionRef = useRef<boolean>(false)
+  const repeatTime = useRef<number>(0)
 
   useFrame((_, delta) => {
-    if (!action) return
-    if (!repeatTime.current) return
+    const action = getInputState().actions[actionKey] ?? false
 
-    repeatTime.current -= delta
+    const justPressed = action && !actionRef.current
+    const isRepeating = action && repeat
 
-    if (repeatTime.current <= 0) {
-      repeatTime.current += autoRepeatInterval
+    if (justPressed) {
+      repeatTime.current = autoRepeatDelay
       callback()
+    } else if (isRepeating) {
+      if ((repeatTime.current -= delta) <= 0) {
+        repeatTime.current += autoRepeatInterval
+        callback()
+      }
     }
+
+    actionRef.current = action
   })
 }
 
 export function useActionRelease(
   actionKey: Threetris.Action,
-  callback: () => void
+  callback: () => void,
 ) {
-  const action = useInputStore((store) => store.actions[actionKey])
+  const actionRef = useRef<boolean>(false)
 
-  useEffect(() => {
-    if (!action) callback()
-  }, [action])
+  useFrame(() => {
+    const action = getInputState().actions[actionKey] ?? false
+
+    const justReleased = !action && actionRef.current
+
+    if (justReleased) callback()
+
+    actionRef.current = action
+  })
 }

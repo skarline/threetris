@@ -2,7 +2,6 @@ import { create } from "zustand"
 
 import { TetriminosArray } from "../constants/tetriminos"
 import { randomNumberGenerator } from "../utils/random"
-import { initial } from "lodash"
 
 interface GameState {
   piece: Threetris.Piece | null
@@ -10,15 +9,18 @@ interface GameState {
   matrix: Threetris.Matrix
 }
 
-interface GameStore extends GameState {
+interface GameActions {
   reset: () => void
-  move: (deltaX: number, deltaY: number) => void
+  move: (deltaX: number, deltaY: number) => boolean
   rotate: (clockwise: boolean) => void
+  lock: () => void
+  nextPiece: () => void
+  testPieceMove: (deltaX: number, deltaY: number) => boolean
 }
 
 const rng = randomNumberGenerator(Date.now())
 
-const defaultState: Readonly<GameState> = {
+const initialState: Readonly<GameState> = {
   piece: null,
   bag: [],
   matrix: {
@@ -29,7 +31,7 @@ const defaultState: Readonly<GameState> = {
 
 function checkCollision(
   piece: Threetris.Piece,
-  matrix: Threetris.Matrix
+  matrix: Threetris.Matrix,
 ): boolean {
   const facing = piece.tetrimino.facings[piece.rotation]
 
@@ -51,10 +53,10 @@ function createBag() {
   return [...TetriminosArray].sort(() => rng.next().value - 0.5)
 }
 
-export const useGameStore = create<GameStore>((set, get) => ({
-  ...defaultState,
+export const useGameStore = create<GameState & GameActions>((set, get) => ({
+  ...initialState,
   reset: () => {
-    const state = defaultState
+    const state = initialState
 
     const bag = createBag()
 
@@ -69,15 +71,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
       bag,
     })
   },
-  move: (deltaX: number, deltaY: number) => {
-    const { piece, matrix } = get()
-    if (!piece) return
+  move: (deltaX: number, deltaY: number): boolean => {
+    const { lock, piece, matrix } = get()
+    if (!piece) return false
 
     const testPiece = { ...piece, x: piece.x + deltaX, y: piece.y + deltaY }
 
-    if (!checkCollision(testPiece, matrix)) {
+    const collision = checkCollision(testPiece, matrix)
+
+    if (!collision) {
       set({ piece: testPiece })
     }
+
+    return collision
   },
   rotate: (clockwise: boolean) => {
     const { piece, matrix } = get()
@@ -97,4 +103,54 @@ export const useGameStore = create<GameStore>((set, get) => ({
       set({ piece: testPiece })
     }
   },
+  lock: () => {
+    const { piece, matrix, bag, nextPiece } = get()
+    if (!piece) return
+
+    const facing = piece.tetrimino.facings[piece.rotation]
+
+    const newBlocks = facing.blocks.map((block) => ({
+      x: piece.x + block.x,
+      y: piece.y + block.y,
+      type: block.type,
+    }))
+
+    const newMatrix = {
+      ...matrix,
+      blocks: matrix.blocks.concat(newBlocks),
+    }
+
+    const newBag = bag.length === 0 ? createBag() : bag
+
+    set({
+      matrix: newMatrix,
+      bag: newBag,
+    })
+
+    nextPiece()
+  },
+  nextPiece: () => {
+    const state = get()
+
+    const bag = state.bag.length === 0 ? createBag() : state.bag
+
+    const piece: Threetris.Piece = {
+      tetrimino: bag.shift()!,
+      rotation: 0,
+      x: Math.floor(state.matrix.size[0] / 2),
+      y: 20,
+    }
+
+    set({ piece, bag })
+  },
+  testPieceMove: (deltaX: number, deltaY: number): boolean => {
+    const { piece, matrix } = get()
+    if (!piece) return false
+
+    const testPiece = { ...piece, x: piece.x + deltaX, y: piece.y + deltaY }
+
+    return !checkCollision(testPiece, matrix)
+  },
 }))
+
+export const getGameState = () => useGameStore.getState()

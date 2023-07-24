@@ -5,8 +5,10 @@ interface InputStore {
   toggleAction: (action: Threetris.Action, value: boolean) => void
 }
 
-export const useInputStore = create<InputStore>((set) => ({
+const state = create<InputStore>((set) => ({
   actions: {},
   toggleAction: (action: Threetris.Action, value: boolean) =>
     set((state) => ({ actions: { ...state.actions, [action]: value } })),
 }))
+
+export const getInputState = () => state.getState()

@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber"
 
 import { Matrix } from "./Matrix"
 import { Piece } from "./Piece"
-import { useActionPress, useActionRelease } from "../hooks/input"
+import { useActionPress } from "../hooks/input"
 import { getGameState, useGameStore } from "../stores/game"
 
 const blockSize = 20

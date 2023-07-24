@@ -72,7 +72,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
     })
   },
   move: (deltaX: number, deltaY: number): boolean => {
-    const { lock, piece, matrix } = get()
+    const { piece, matrix } = get()
     if (!piece) return false
 
     const testPiece = { ...piece, x: piece.x + deltaX, y: piece.y + deltaY }

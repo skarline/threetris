@@ -7,26 +7,38 @@ interface GameState {
   piece: Threetris.Piece | null
   bag: Threetris.Tetrimino[]
   matrix: Threetris.Matrix
+  isAnimating: boolean
 }
 
 interface GameActions {
   reset: () => void
-  move: (deltaX: number, deltaY: number) => boolean
-  rotate: (clockwise: boolean) => void
-  lock: () => void
-  nextPiece: () => void
+  movePiece: (deltaX: number, deltaY: number) => boolean
   testPieceMove: (deltaX: number, deltaY: number) => boolean
+  rotatePiece: (clockwise: boolean) => void
+  lockPiece: () => void
+  generatePiece: () => void
+  clearFullLines: () => void
 }
 
 const rng = randomNumberGenerator(Date.now())
 
-const initialState: Readonly<GameState> = {
-  piece: null,
-  bag: [],
-  matrix: {
-    size: [10, 20],
-    blocks: [],
-  },
+function getInitialState(): GameState {
+  const bag = shuffleTetriminos()
+
+  return {
+    piece: {
+      tetrimino: bag.shift()!,
+      rotation: 0,
+      x: Math.floor(10 / 2),
+      y: 20,
+    },
+    bag,
+    matrix: {
+      size: [10, 20],
+      blocks: [],
+    },
+    isAnimating: false,
+  }
 }
 
 function checkCollision(
@@ -49,29 +61,14 @@ function checkCollision(
   })
 }
 
-function createBag() {
+function shuffleTetriminos() {
   return [...TetriminosArray].sort(() => rng.next().value - 0.5)
 }
 
 export const useGameStore = create<GameState & GameActions>((set, get) => ({
-  ...initialState,
-  reset: () => {
-    const state = initialState
-
-    const bag = createBag()
-
-    set({
-      ...state,
-      piece: {
-        tetrimino: bag.shift()!,
-        rotation: 0,
-        x: Math.floor(state.matrix.size[0] / 2),
-        y: 20,
-      },
-      bag,
-    })
-  },
-  move: (deltaX: number, deltaY: number): boolean => {
+  ...getInitialState(),
+  reset: () => {},
+  movePiece: (deltaX: number, deltaY: number): boolean => {
     const { piece, matrix } = get()
     if (!piece) return false
 
@@ -85,7 +82,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
 
     return collision
   },
-  rotate: (clockwise: boolean) => {
+  rotatePiece: (clockwise: boolean) => {
     const { piece, matrix } = get()
     if (!piece) return
 
@@ -103,8 +100,8 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
       set({ piece: testPiece })
     }
   },
-  lock: () => {
-    const { piece, matrix, bag, nextPiece } = get()
+  lockPiece: () => {
+    const { piece, matrix, clearFullLines } = get()
     if (!piece) return
 
     const facing = piece.tetrimino.facings[piece.rotation]
@@ -120,28 +117,68 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
       blocks: matrix.blocks.concat(newBlocks),
     }
 
-    const newBag = bag.length === 0 ? createBag() : bag
-
     set({
+      piece: null,
       matrix: newMatrix,
-      bag: newBag,
+      isAnimating: true,
     })
 
-    nextPiece()
+    setTimeout(() => {
+      set({ isAnimating: false })
+      clearFullLines()
+    }, 200)
   },
-  nextPiece: () => {
-    const state = get()
+  generatePiece: () => {
+    const { matrix, piece, bag } = get()
+    if (piece) return
 
-    const bag = state.bag.length === 0 ? createBag() : state.bag
+    const newBag = [...bag]
+    if (newBag.length < TetriminosArray.length) {
+      newBag.push(...shuffleTetriminos())
+    }
 
-    const piece: Threetris.Piece = {
-      tetrimino: bag.shift()!,
+    const newPiece: Threetris.Piece = {
+      tetrimino: newBag.shift()!,
       rotation: 0,
-      x: Math.floor(state.matrix.size[0] / 2),
+      x: Math.floor(matrix.size[0] / 2),
       y: 20,
     }
 
-    set({ piece, bag })
+    set({ piece: newPiece, bag: newBag })
+  },
+  clearFullLines: () => {
+    const { matrix } = get()
+
+    const blocksPerLine = matrix.blocks.reduce<number[]>((acc, block) => {
+      acc[block.y] ??= 0
+      acc[block.y]++
+
+      return acc
+    }, [])
+
+    const fullLines = blocksPerLine.reduce<number[]>((acc, count, y) => {
+      if (count === matrix.size[0]) {
+        acc.push(y)
+      }
+
+      return acc
+    }, [])
+
+    if (fullLines.length > 0) {
+      const newBlocks = matrix.blocks
+        .filter((block) => !fullLines.includes(block.y))
+        .map((block) => ({
+          ...block,
+          y: block.y - fullLines.filter((line) => line < block.y).length,
+        }))
+
+      const newMatrix = {
+        ...matrix,
+        blocks: newBlocks,
+      }
+
+      set({ matrix: newMatrix })
+    }
   },
   testPieceMove: (deltaX: number, deltaY: number): boolean => {
     const { piece, matrix } = get()

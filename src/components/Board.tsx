@@ -31,14 +31,21 @@ function BoardPiece() {
   )
 }
 
-function useMove() {
-  useActionPress("MoveLeft", () => getGameState().move(-1, 0), true)
-  useActionPress("MoveRight", () => getGameState().move(1, 0), true)
+function useGeneration() {
+  useFrame(() => {
+    const { piece, isAnimating, generatePiece } = getGameState()
+
+    if (!piece && !isAnimating) {
+      generatePiece()
+    }
+  })
 }
 
-function useRotate() {
-  useActionPress("RotateCW", () => getGameState().rotate(true))
-  useActionPress("RotateCCW", () => getGameState().rotate(false))
+function useControls() {
+  useActionPress("MoveLeft", () => getGameState().movePiece(-1, 0), true)
+  useActionPress("MoveRight", () => getGameState().movePiece(1, 0), true)
+  useActionPress("RotateCW", () => getGameState().rotatePiece(true))
+  useActionPress("RotateCCW", () => getGameState().rotatePiece(false))
 }
 
 function useFall() {
@@ -48,30 +55,30 @@ function useFall() {
     "SoftDrop",
     () => {
       fallingTime.current = 1
-      getGameState().move(0, -1)
+      getGameState().movePiece(0, -1)
     },
     true,
   )
 
   useActionPress("HardDrop", () => {
-    const { testPieceMove, move, lock } = getGameState()
+    const { testPieceMove, movePiece, lockPiece } = getGameState()
 
     let delta = 0
     while (testPieceMove(0, delta - 1)) delta--
 
-    move(0, delta)
-    lock()
+    movePiece(0, delta)
+    lockPiece()
   })
 
   useFrame((_, delta) => {
-    const { move, testPieceMove } = getGameState()
+    const { movePiece, testPieceMove } = getGameState()
 
     const canFall = testPieceMove(0, -1)
 
     if (canFall) {
       if ((fallingTime.current -= delta) <= 0) {
         fallingTime.current += 1
-        move(0, -1)
+        movePiece(0, -1)
       }
     } else {
       fallingTime.current = 1
@@ -83,7 +90,7 @@ function useLock() {
   const lockDownTime = useRef(0.5)
 
   useFrame((_, delta) => {
-    const { lock, testPieceMove } = getGameState()
+    const { lockPiece, testPieceMove } = getGameState()
 
     const canFall = testPieceMove(0, -1)
 
@@ -92,17 +99,17 @@ function useLock() {
     } else {
       if ((lockDownTime.current -= delta) <= 0) {
         lockDownTime.current += 0.5
-        lock()
+        lockPiece()
       }
     }
   })
 }
 
 export function Board() {
-  useMove()
-  useRotate()
   useFall()
   useLock()
+  useGeneration()
+  useControls()
 
   useEffect(() => {
     getGameState().reset()

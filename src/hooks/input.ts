@@ -1,16 +1,8 @@
 import { useCallback, useEffect, useRef } from "react"
-
-import { getInputState } from "../stores/input"
 import { useFrame } from "@react-three/fiber"
 
-const ActionMap: Record<Threetris.Action, string[]> = {
-  MoveLeft: ["ArrowLeft"],
-  MoveRight: ["ArrowRight"],
-  HardDrop: ["Space"],
-  SoftDrop: ["ArrowDown"],
-  RotateCW: ["KeyX", "ArrowUp"],
-  RotateCCW: ["KeyZ"],
-}
+import { getInputState } from "@/stores/input"
+import { ActionMap } from "@/constants/input"
 
 const autoRepeatDelay = 0.3
 const autoRepeatInterval = 0.05
@@ -71,10 +63,7 @@ export function useActionPress(
   })
 }
 
-export function useActionRelease(
-  actionKey: Threetris.Action,
-  callback: () => void,
-) {
+function useActionRelease(actionKey: Threetris.Action, callback: () => void) {
   const actionRef = useRef<boolean>(false)
 
   useFrame(() => {

@@ -1,5 +1,5 @@
 // XORShift implementation
-export function* randomNumberGenerator(seed: number): Generator<number> {
+export function* createRNG(seed: number): Generator<number> {
   let state = seed
 
   while (true) {

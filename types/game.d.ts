@@ -6,12 +6,14 @@ declare namespace Threetris {
   }
 
   interface Matrix {
-    size: [number, number]
+    width: number
+    height: number
     blocks: Block[]
   }
 
   interface Tetrimino {
-    size: [number, number]
+    width: number
+    height: number
     facings: Matrix[]
   }
 
@@ -29,4 +31,5 @@ declare namespace Threetris {
     | "SoftDrop"
     | "RotateCW"
     | "RotateCCW"
+    | "Hold"
 }

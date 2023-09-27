@@ -2,15 +2,19 @@ function createTetrimino(opts: {
   size: [number, number]
   data: number[][]
 }): Threetris.Tetrimino {
-  const { size, data } = opts
+  const {
+    size: [width, height],
+    data,
+  } = opts
 
   const facings: Threetris.Matrix[] = data.map((data) => ({
-    size,
+    width,
+    height,
     blocks: data.reduce((acc, type, i) => {
       if (type) {
         acc.push({
-          x: i % size[0],
-          y: Math.floor(i / size[0]),
+          x: i % width,
+          y: Math.floor(i / width),
           type,
         })
       }
@@ -18,7 +22,7 @@ function createTetrimino(opts: {
     }, [] as Threetris.Block[]),
   }))
 
-  return { size, facings }
+  return { width, height, facings }
 }
 
 export const Tetriminos: Record<string, Threetris.Tetrimino> = {

@@ -4,9 +4,11 @@ import { Block } from "./Block"
 
 const BLOCK_SIZE = 20
 
-export interface MatrixProps extends Threetris.Matrix, GroupProps {}
+export interface MatrixProps extends Threetris.Matrix, GroupProps {
+  opacity?: number
+}
 
-export function Matrix({ blocks, ...rest }: MatrixProps) {
+export function Matrix({ blocks, opacity = 1, ...rest }: MatrixProps) {
   return (
     <group {...rest}>
       {blocks.map(({ x, y, type }, index) => {
@@ -21,6 +23,7 @@ export function Matrix({ blocks, ...rest }: MatrixProps) {
             type={type}
             size={BLOCK_SIZE}
             position={[xPosition, yPosition, 0]}
+            opacity={opacity}
           />
         )
       })}

@@ -6,6 +6,7 @@ import { useActionPress } from "@/hooks/input"
 import {
   addPieceToMatrix,
   checkCollision,
+  getLandedPiece,
   getShuffledTetriminos,
   movePiece,
   rotatePiece,
@@ -87,13 +88,7 @@ function hardDrop() {
   const { piece, matrix, setPiece } = getGameState()
 
   if (piece) {
-    let testPiece = piece
-
-    while (!checkCollision(testPiece, matrix)) {
-      testPiece = movePiece(testPiece, 0, -1)
-    }
-
-    setPiece(movePiece(testPiece, 0, 1))
+    setPiece(getLandedPiece(piece, matrix))
     lockPiece()
   }
 }

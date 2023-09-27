@@ -1,4 +1,4 @@
-import { useGameStore } from "@/stores/game"
+import { useGameGhostPiece, useGameStore } from "@/stores/game"
 import { useEngine } from "@/hooks/useEngine"
 
 import { Matrix } from "./Matrix"
@@ -35,12 +35,33 @@ function BoardPiece() {
   )
 }
 
+function BoardGhostPiece() {
+  const ghostPiece = useGameGhostPiece()
+  if (!ghostPiece) return null
+
+  const xPosition = ghostPiece.x * blockSize
+  const yPosition = ghostPiece.y * blockSize
+
+  return (
+    <Piece
+      position={[xPosition, yPosition, 0]}
+      tetrimino={ghostPiece.tetrimino}
+      rotation={ghostPiece.rotation}
+      opacity={0.5}
+    />
+  )
+}
+
 export function Board() {
   useEngine()
 
+  const boardWidth = useGameStore((state) => state.matrix.width * blockSize)
+  const boardHeight = useGameStore((state) => state.matrix.height * blockSize)
+
   return (
-    <group>
+    <group position={[-boardWidth / 2, -boardHeight / 2, 0]}>
       <BoardMatrix />
+      <BoardGhostPiece />
       <BoardPiece />
     </group>
   )

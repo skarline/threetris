@@ -26,6 +26,19 @@ export function checkCollision(
   })
 }
 
+export function getLandedPiece(
+  piece: Threetris.Piece,
+  matrix: Threetris.Matrix,
+) {
+  let testPiece = { ...piece }
+
+  while (!checkCollision(testPiece, matrix)) {
+    testPiece = movePiece(testPiece, 0, -1)
+  }
+
+  return movePiece(testPiece, 0, 1)
+}
+
 export function getShuffledTetriminos() {
   return [...TetriminosArray].sort(() => rng.next().value - 0.5)
 }

@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { devtools } from "zustand/middleware"
 import { Ruleset } from "@/constants/ruleset"
+import { getLandedPiece } from "@/utils/engine"
 
 interface GameState {
   matrix: Threetris.Matrix
@@ -48,6 +49,14 @@ export const useGameStore = create<GameState & GameActions>()(
     setLockDownTime: (lockDownTime) => set({ lockDownTime }),
   })),
 )
+
+export function useGameGhostPiece() {
+  const piece = useGameStore((state) => state.piece)
+  const matrix = useGameStore((state) => state.matrix)
+
+  if (!piece) return null
+  return getLandedPiece(piece, matrix)
+}
 
 export const getGameState = () => useGameStore.getState()
 export const resetGameState = () => useGameStore.setState(initialState)

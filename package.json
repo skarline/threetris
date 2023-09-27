@@ -9,25 +9,25 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@react-three/fiber": "^8.13.4",
+    "@react-three/fiber": "^8.14.3",
     "@types/three": "^0.152.1",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "three": "^0.153.0",
-    "zustand": "^4.3.8"
+    "zustand": "^4.4.1"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.195",
-    "@types/react": "^18.2.14",
-    "@types/react-dom": "^18.2.6",
-    "@typescript-eslint/eslint-plugin": "^6.2.0",
-    "@typescript-eslint/parser": "^6.2.0",
-    "@vitejs/plugin-react-swc": "^3.3.2",
-    "eslint": "^8.45.0",
-    "eslint-plugin-react": "^7.33.0",
-    "prettier": "^3.0.0",
-    "typescript": "^5.1.5",
-    "vite": "^4.3.9"
+    "@types/lodash": "^4.14.199",
+    "@types/react": "^18.2.23",
+    "@types/react-dom": "^18.2.8",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "@typescript-eslint/parser": "^6.7.3",
+    "@vitejs/plugin-react-swc": "^3.4.0",
+    "eslint": "^8.50.0",
+    "eslint-plugin-react": "^7.33.2",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9"
   }
 }

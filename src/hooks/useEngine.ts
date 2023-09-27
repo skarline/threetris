@@ -12,6 +12,8 @@ import {
   rotatePiece,
 } from "@/utils/engine"
 import { Ruleset } from "@/constants/ruleset"
+import { Tetriminos } from "@/constants/tetriminos"
+import { IWallKickOffsets, JLSTZWallKickOffsets } from "@/constants/rotation"
 
 function spawnPiece(tetrimino: Threetris.Tetrimino) {
   const { matrix, setPiece } = getGameState()
@@ -76,10 +78,23 @@ function rotateAndCollide(delta: number) {
   const { piece, matrix, setPiece } = getGameState()
 
   if (piece) {
-    const testPiece = rotatePiece(piece, delta)
+    const { tetrimino, rotation } = piece
+    let rotatedPiece = rotatePiece(piece, delta)
 
-    if (!checkCollision(testPiece, matrix)) {
-      setPiece(testPiece)
+    const offset = (
+      tetrimino === Tetriminos.I ? IWallKickOffsets : JLSTZWallKickOffsets
+    )[rotation]
+
+    for (const [dx, dy] of offset) {
+      const testPiece =
+        delta > 0
+          ? movePiece(rotatedPiece, dx, dy)
+          : movePiece(rotatedPiece, -dx, -dy)
+
+      if (!checkCollision(testPiece, matrix)) {
+        setPiece(testPiece)
+        return
+      }
     }
   }
 }

@@ -1,4 +1,7 @@
-export const JLSTZWallKickOffsets = [
+type OffsetData = [number, number][]
+type WallKickOffsets = [OffsetData, OffsetData, OffsetData, OffsetData]
+
+export const JLSTZWallKickOffsets: WallKickOffsets = [
   [
     [0, 0],
     [-1, 0],
@@ -29,7 +32,7 @@ export const JLSTZWallKickOffsets = [
   ],
 ]
 
-export const IWallKickOffsets = [
+export const IWallKickOffsets: WallKickOffsets = [
   [
     [0, 0],
     [-2, 0],

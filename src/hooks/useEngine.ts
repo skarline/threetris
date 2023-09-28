@@ -76,20 +76,22 @@ function moveAndCollide(dx: number, dy: number) {
 
 function rotateAndCollide(delta: number) {
   const { piece, matrix, setPiece } = getGameState()
+  const isClockwise = delta > 0
 
   if (piece) {
     const { tetrimino, rotation } = piece
     let rotatedPiece = rotatePiece(piece, delta)
 
+    const offsetIndex = isClockwise ? rotation : rotation - 1
+
     const offset = (
       tetrimino === Tetriminos.I ? IWallKickOffsets : JLSTZWallKickOffsets
-    )[rotation]
+    ).at(offsetIndex)!
 
     for (const [dx, dy] of offset) {
-      const testPiece =
-        delta > 0
-          ? movePiece(rotatedPiece, dx, dy)
-          : movePiece(rotatedPiece, -dx, -dy)
+      const testPiece = isClockwise
+        ? movePiece(rotatedPiece, dx, dy)
+        : movePiece(rotatedPiece, -dx, -dy)
 
       if (!checkCollision(testPiece, matrix)) {
         setPiece(testPiece)

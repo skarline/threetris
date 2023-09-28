@@ -21,7 +21,7 @@ declare namespace Threetris {
     x: number
     y: number
     tetrimino: Tetrimino
-    rotation: PieceRotation
+    rotation: number
   }
 
   type Action =

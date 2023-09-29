@@ -20,7 +20,7 @@ function spawnPiece(tetrimino: Threetris.Tetrimino) {
 
   const piece = {
     x: Math.floor((matrix.width - tetrimino.width) / 2),
-    y: matrix.height,
+    y: matrix.height - 1,
     tetrimino,
     rotation: 0,
   }

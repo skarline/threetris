@@ -2,7 +2,7 @@ import { GroupProps } from "@react-three/fiber"
 
 import { Block } from "./Block"
 
-const BLOCK_SIZE = 20
+const blockSize = 20
 
 export interface MatrixProps extends Threetris.Matrix, GroupProps {
   opacity?: number
@@ -14,14 +14,14 @@ export function Matrix({ blocks, opacity = 1, ...rest }: MatrixProps) {
       {blocks.map(({ x, y, type }, index) => {
         if (!type) return null
 
-        const xPosition = x * BLOCK_SIZE
-        const yPosition = y * BLOCK_SIZE
+        const xPosition = x * blockSize
+        const yPosition = y * blockSize
 
         return (
           <Block
             key={index}
             type={type}
-            size={BLOCK_SIZE}
+            size={blockSize}
             position={[xPosition, yPosition, 0]}
             opacity={opacity}
           />

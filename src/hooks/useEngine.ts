@@ -1,5 +1,5 @@
+import { useFrame } from "@/hooks/useFrame"
 import { useRef } from "react"
-import { useFrame } from "@react-three/fiber"
 
 import { getGameState } from "@/stores/game"
 import { useActionPress } from "@/hooks/input"
@@ -14,6 +14,9 @@ import {
 import { Ruleset } from "@/constants/ruleset"
 import { Tetriminos } from "@/constants/tetriminos"
 import { IWallKickOffsets, JLSTZWallKickOffsets } from "@/constants/rotation"
+
+const moveRepeatDelay = 0.3
+const moveRepeatInterval = 0.05
 
 function spawnPiece(tetrimino: Threetris.Tetrimino) {
   const { matrix, setPiece } = getGameState()
@@ -160,7 +163,7 @@ function eliminateBlocks() {
 export function useEngine() {
   const lockingPiece = useRef<Threetris.Piece | null>(null)
 
-  useFrame((_, delta) => {
+  useFrame((delta) => {
     const {
       piece,
       hitList,
@@ -207,13 +210,13 @@ export function useEngine() {
     }
   })
 
-  useActionPress("MoveLeft", () => moveAndCollide(-1, 0), true)
-  useActionPress("MoveRight", () => moveAndCollide(1, 0), true)
+  useActionPress("MoveLeft", () => moveAndCollide(-1, 0), moveRepeatDelay, moveRepeatInterval)
+  useActionPress("MoveRight", () => moveAndCollide(1, 0), moveRepeatDelay, moveRepeatInterval)
 
   useActionPress("RotateCW", () => rotateAndCollide(1))
   useActionPress("RotateCCW", () => rotateAndCollide(-1))
 
-  useActionPress("SoftDrop", () => moveAndCollide(0, -1), true)
+  useActionPress("SoftDrop", () => moveAndCollide(0, -1), moveRepeatDelay, moveRepeatInterval)
   useActionPress("HardDrop", hardDrop)
 
   useActionPress("Hold", holdPiece)

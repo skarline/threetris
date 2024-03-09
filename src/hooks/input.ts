@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useRef } from "react"
-import { useFrame } from "@react-three/fiber"
 
-import { getInputState } from "@/stores/input"
+import { useFrame } from "@/hooks/useFrame"
+import { getAction, getInputState } from "@/stores/input"
 import { ActionMap } from "@/constants/input"
-
-const autoRepeatDelay = 0.3
-const autoRepeatInterval = 0.05
 
 function getActionFromKey(key: string) {
   return Object.entries(ActionMap).find(([, keys]) =>
@@ -38,28 +35,29 @@ export function useInput() {
 export function useActionPress(
   actionKey: Threetris.Action,
   callback: () => void,
-  repeat = false,
+  repeatDelay = 0.3,
+  repeatInterval = 0
 ) {
-  const actionRef = useRef<boolean>(false)
-  const repeatTime = useRef<number>(0)
+  const previousActionRef = useRef<boolean>(false)
+  const repeatTimeRef = useRef<number>(0)
 
-  useFrame((_, delta) => {
-    const action = getInputState().actions[actionKey] ?? false
+  useFrame((delta) => {
+    const action = getAction(actionKey)
 
-    const justPressed = action && !actionRef.current
-    const isRepeating = action && repeat
+    const justPressed = action && !previousActionRef.current
+    const isRepeating = action && repeatInterval > 0
 
     if (justPressed) {
-      repeatTime.current = autoRepeatDelay
+      repeatTimeRef.current = repeatDelay
       callback()
     } else if (isRepeating) {
-      if ((repeatTime.current -= delta) <= 0) {
-        repeatTime.current += autoRepeatInterval
+      if ((repeatTimeRef.current -= delta) <= 0) {
+        repeatTimeRef.current += repeatInterval
         callback()
       }
     }
 
-    actionRef.current = action
+    previousActionRef.current = action
   })
 }
 

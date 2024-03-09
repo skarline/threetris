@@ -1,6 +1,6 @@
+import { Ruleset } from "@/constants/ruleset"
 import { create } from "zustand"
 import { devtools } from "zustand/middleware"
-import { Ruleset } from "@/constants/ruleset"
 import { getLandedPiece } from "@/utils/engine"
 
 interface GameState {

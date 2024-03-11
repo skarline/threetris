@@ -29,6 +29,7 @@ export function Matrix({ blocks, width, height, ...rest }: MatrixProps) {
               gridColumn: x + 1,
               gridRow: height - y,
             }}
+            key={index}
           >
             <Block key={index} type={type} />
           </div>

@@ -11,6 +11,9 @@ dependencies:
   lodash:
     specifier: ^4.17.21
     version: 4.17.21
+  p5:
+    specifier: ^1.9.1
+    version: 1.9.1
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -25,6 +28,9 @@ devDependencies:
   '@types/lodash':
     specifier: ^4.14.199
     version: 4.14.199
+  '@types/p5':
+    specifier: ^1.7.6
+    version: 1.7.6
   '@types/react':
     specifier: ^18.2.23
     version: 18.2.23
@@ -607,6 +613,10 @@ packages:
 
   /@types/lodash@4.14.199:
     resolution: {integrity: sha512-Vrjz5N5Ia4SEzWWgIVwnHNEnb1UE1XMkvY5DGXrAeOGE9imk0hgTHh5GyDjLDJi9OTCn9oo9dXH1uToK1VRfrg==}
+    dev: true
+
+  /@types/p5@1.7.6:
+    resolution: {integrity: sha512-6pLTOo0V3N5jZb5nTwjiv3lPHLK3Z/TjbhQUj8CTWXocUk1Z/f6OHTp3Pcwi1BhWnf5gqKUcyEb1gP0KIJuQgw==}
     dev: true
 
   /@types/parse-json@4.0.2:
@@ -1959,6 +1969,10 @@ packages:
     dependencies:
       p-limit: 3.1.0
     dev: true
+
+  /p5@1.9.1:
+    resolution: {integrity: sha512-TpuCll0KwyY8jyQbY9j4wCt+pA3Qv0egd4MqkrhJ58pBgdj5im5XsKpP/64gepDilJXTk126vWXiNAPeSezNdg==}
+    dev: false
 
   /parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}

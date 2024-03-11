@@ -72,3 +72,7 @@ export function addPieceToMatrix(
     blocks: matrix.blocks.concat(blocks),
   }
 }
+
+export function getMatrixRealHeight(matrix: Threetris.Matrix) {
+  return Math.max(...matrix.blocks.map((block) => block.y), 0)
+}

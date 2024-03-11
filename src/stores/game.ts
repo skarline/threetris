@@ -12,6 +12,7 @@ interface GameState {
   hitList: Threetris.Block[]
   fallingTime: number
   lockDownTime: number
+  level: number
   elapsedTime: number
   completedLines: number
   score: number
@@ -26,6 +27,7 @@ interface GameActions {
   setHitList: (hitList: Threetris.Block[]) => void
   setFallingTime: (fallingTime: number) => void
   setLockDownTime: (lockDownTime: number) => void
+  setLevel: (level: number) => void
   setElapsedTime: (elapsedTime: number) => void
   setCompletedLines: (completedLines: number) => void
   setScore: (score: number) => void
@@ -40,6 +42,7 @@ const initialState: GameState = {
   hitList: [],
   fallingTime: Ruleset.FallingDelay,
   lockDownTime: Ruleset.LockDownDelay,
+  level: 1,
   elapsedTime: 0,
   completedLines: 0,
   score: 0,
@@ -56,6 +59,7 @@ export const useGameStore = create<GameState & GameActions>()(
     setHitList: (hitList) => set({ hitList }),
     setFallingTime: (fallingTime) => set({ fallingTime }),
     setLockDownTime: (lockDownTime) => set({ lockDownTime }),
+    setLevel: (level) => set({ level }),
     setElapsedTime: (elapsedTime) => set({ elapsedTime }),
     setCompletedLines: (completedLines) => set({ completedLines }),
     setScore: (score) => set({ score }),

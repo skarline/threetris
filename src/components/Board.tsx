@@ -46,6 +46,7 @@ function BoardPiece() {
         position: "absolute",
         left: piece.x * UI.BlockSize,
         bottom: piece.y * UI.BlockSize,
+        zIndex: piece.y > 0 ? 1 : 0,
       }}
     >
       <Piece tetrimino={piece.tetrimino} rotation={piece.rotation} />
@@ -158,8 +159,18 @@ export function Board() {
       </div>
       <div
         css={{
-          border: "0.125em solid white",
-          borderRadius: "0.125rem",
+          backgroundColor: "black",
+          position: "relative",
+          "&::after": {
+            position: "absolute",
+            content: "''",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            outline: "0.125em solid white",
+            borderRadius: "0.25rem",
+          },
         }}
       >
         <div css={{ position: "relative" }}>

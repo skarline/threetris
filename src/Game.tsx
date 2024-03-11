@@ -1,6 +1,8 @@
 import { Board } from "./components/Board"
 import { useInput } from "./hooks/input"
 import { useEngine } from "@/hooks/useEngine"
+import { AnimatedBackground } from "./components/AnimatedBackground"
+import { useGameStore } from "./stores/game"
 
 function Game() {
   useEngine()
@@ -16,6 +18,7 @@ function Game() {
         alignItems: "center",
       }}
     >
+      <AnimatedBackground />
       <Board />
     </div>
   )

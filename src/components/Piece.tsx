@@ -1,14 +1,13 @@
-import { Matrix, MatrixProps } from "./Matrix"
+import { Matrix } from "./Matrix"
 
-export interface PieceProps
-  extends Omit<MatrixProps, "width" | "height" | "blocks" | "rotation"> {
+export interface PieceProps {
   tetrimino: Threetris.Tetrimino
   rotation?: number
 }
 
-export function Piece({ tetrimino, rotation = 0, ...rest }: PieceProps) {
+export function Piece({ tetrimino, rotation = 0 }: PieceProps) {
   const { width, height, facings } = tetrimino
   const { blocks } = facings[rotation]
 
-  return <Matrix {...rest} width={width} height={height} blocks={blocks} />
+  return <Matrix width={width} height={height} blocks={blocks} />
 }

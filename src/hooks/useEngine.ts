@@ -69,7 +69,7 @@ function moveAndCollide(dx: number, dy: number) {
   const { piece, matrix, setPiece } = getGameState()
 
   if (piece) {
-    let testPiece = movePiece(piece, dx, dy)
+    const testPiece = movePiece(piece, dx, dy)
 
     if (!checkCollision(testPiece, matrix)) {
       setPiece(testPiece)
@@ -83,7 +83,7 @@ function rotateAndCollide(delta: number) {
 
   if (piece) {
     const { tetrimino, rotation } = piece
-    let rotatedPiece = rotatePiece(piece, delta)
+    const rotatedPiece = rotatePiece(piece, delta)
 
     const offsetIndex = isClockwise ? rotation : rotation - 1
 
@@ -161,9 +161,12 @@ function eliminateBlocks() {
 }
 
 export function useEngine() {
-  const lockingPiece = useRef<Threetris.Piece | null>(null)
+  const lockingPieceRef = useRef<Threetris.Piece | null>(null)
+  const isPlayingRef = useRef(true)
 
   useFrame((delta) => {
+    if (!isPlayingRef.current) return
+
     const {
       piece,
       hitList,
@@ -174,10 +177,6 @@ export function useEngine() {
       setFallingTime,
       setLockDownTime,
     } = getGameState()
-
-    if (hitList.length) {
-      eliminateBlocks()
-    }
 
     if (!piece) {
       spawnPiece(getNextPiece())
@@ -196,8 +195,8 @@ export function useEngine() {
       }
 
       setFallingTime(time)
-    } else if (lockingPiece.current === piece) {
-      let time = lockDownTime - delta
+    } else if (lockingPieceRef.current === piece) {
+      const time = lockDownTime - delta
 
       if (time <= 0) {
         lockPiece()
@@ -205,19 +204,42 @@ export function useEngine() {
 
       setLockDownTime(time)
     } else {
-      lockingPiece.current = piece
+      lockingPieceRef.current = piece
       setLockDownTime(Ruleset.LockDownDelay)
+    }
+
+    if (hitList.length) {
+      eliminateBlocks()
     }
   })
 
-  useActionPress("MoveLeft", () => moveAndCollide(-1, 0), moveRepeatDelay, moveRepeatInterval)
-  useActionPress("MoveRight", () => moveAndCollide(1, 0), moveRepeatDelay, moveRepeatInterval)
+  useActionPress(
+    "MoveLeft",
+    () => moveAndCollide(-1, 0),
+    moveRepeatDelay,
+    moveRepeatInterval,
+  )
+  useActionPress(
+    "MoveRight",
+    () => moveAndCollide(1, 0),
+    moveRepeatDelay,
+    moveRepeatInterval,
+  )
 
   useActionPress("RotateCW", () => rotateAndCollide(1))
   useActionPress("RotateCCW", () => rotateAndCollide(-1))
 
-  useActionPress("SoftDrop", () => moveAndCollide(0, -1), moveRepeatDelay, moveRepeatInterval)
+  useActionPress(
+    "SoftDrop",
+    () => moveAndCollide(0, -1),
+    moveRepeatDelay,
+    moveRepeatInterval,
+  )
   useActionPress("HardDrop", hardDrop)
 
   useActionPress("Hold", holdPiece)
+
+  useActionPress("Pause", () => {
+    isPlayingRef.current = !isPlayingRef.current
+  })
 }

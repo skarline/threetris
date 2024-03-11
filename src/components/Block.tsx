@@ -1,20 +1,26 @@
-import { Sprite, SpriteProps } from "./Sprite"
-import BlocksSprite from "@/assets/sprites/blocks.png"
-
-export interface BlockProps
-  extends Omit<SpriteProps, "url" | "type" | "size" | "color"> {
-  size: number
+export interface BlockProps {
   type: number
 }
 
-export function Block({ type, size, ...rest }: BlockProps) {
+const COLORS = [
+  "transparent", // empty
+  "yellow", // O
+  "cyan", // I
+  "purple", // T
+  "orange", // L
+  "blue", // J
+  "green", // S
+  "red", // Z
+]
+
+export function Block({ type }: BlockProps) {
   return (
-    <Sprite
-      {...rest}
-      url={BlocksSprite}
-      repeatX={1 / 8}
-      offsetX={(type - 1) / 8}
-      size={[size, size]}
+    <div
+      css={{
+        backgroundColor: COLORS[type],
+        width: "100%",
+        height: "100%",
+      }}
     />
   )
 }

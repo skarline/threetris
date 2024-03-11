@@ -32,4 +32,5 @@ declare namespace Threetris {
     | "RotateCW"
     | "RotateCCW"
     | "Hold"
+    | "Pause"
 }

@@ -1,32 +1,39 @@
-import { GroupProps } from "@react-three/fiber"
+import { HTMLAttributes } from "react"
+
+import { UI } from "@/constants/ui"
 
 import { Block } from "./Block"
 
-const blockSize = 20
+export type MatrixProps = Threetris.Matrix & HTMLAttributes<HTMLDivElement>
 
-export interface MatrixProps extends Threetris.Matrix, GroupProps {
-  opacity?: number
-}
-
-export function Matrix({ blocks, opacity = 1, ...rest }: MatrixProps) {
+export function Matrix({ blocks, width, height, ...rest }: MatrixProps) {
   return (
-    <group {...rest}>
+    <div
+      {...rest}
+      css={{
+        display: "grid",
+        gridTemplateColumns: `repeat(${width}, 1fr)`,
+        gridTemplateRows: `repeat(${height}, 1fr)`,
+        position: "relative",
+        width: `${width * UI.BlockSize}px`,
+        maxWidth: "100%",
+        aspectRatio: `${width}/${height}`,
+      }}
+    >
       {blocks.map(({ x, y, type }, index) => {
         if (!type) return null
 
-        const xPosition = x * blockSize
-        const yPosition = y * blockSize
-
         return (
-          <Block
-            key={index}
-            type={type}
-            size={blockSize}
-            position={[xPosition, yPosition, 0]}
-            opacity={opacity}
-          />
+          <div
+            css={{
+              gridColumn: x + 1,
+              gridRow: height - y,
+            }}
+          >
+            <Block key={index} type={type} />
+          </div>
         )
       })}
-    </group>
+    </div>
   )
 }

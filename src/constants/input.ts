@@ -6,4 +6,5 @@ export const ActionMap: Record<Threetris.Action, string[]> = {
   RotateCW: ["KeyX", "ArrowUp"],
   RotateCCW: ["KeyZ", "ControlLeft", "ControlRight"],
   Hold: ["KeyC", "ShiftLeft", "ShiftRight"],
+  Pause: ["Escape"],
 }

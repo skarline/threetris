@@ -1,42 +1,22 @@
+import { UI } from "@/constants/ui"
 import { useGameGhostPiece, useGameStore } from "@/stores/game"
-import { useEngine } from "@/hooks/useEngine"
 
+import { HoldQueue } from "./HoldQueue"
 import { Matrix } from "./Matrix"
+import { NextQueue } from "./NextQueue"
 import { Piece } from "./Piece"
-import { Ruleset } from "@/constants/ruleset"
-
-const blockSize = 20
-
-const useBoardSize = () =>
-  useGameStore((state) => ({
-    width: state.matrix.width * blockSize,
-    height: state.matrix.height * blockSize,
-  }))
+import { PropsWithChildren } from "react"
 
 function BoardMatrix() {
   const { width, height, blocks } = useGameStore((state) => state.matrix)
 
-  const boardSize = useBoardSize()
-
   return (
-    <>
-      <mesh
-        position={[
-          boardSize.width / 2 - blockSize / 2,
-          boardSize.height / 2 - blockSize / 2,
-          0,
-        ]}
-      >
-        <planeGeometry args={[boardSize.width, boardSize.height, 1]} />
-        <meshStandardMaterial color="#202020" />
-      </mesh>
-      <Matrix
-        position={[0, 0, 0]}
-        width={width}
-        height={height}
-        blocks={blocks}
-      />
-    </>
+    <Matrix
+      className="absolute"
+      width={width}
+      height={height}
+      blocks={blocks}
+    />
   )
 }
 
@@ -44,94 +24,85 @@ function BoardPiece() {
   const piece = useGameStore((state) => state.piece)
   if (!piece) return null
 
-  const xPosition = piece.x * blockSize
-  const yPosition = piece.y * blockSize
-
   return (
-    <Piece
-      position={[xPosition, yPosition, 1]}
-      tetrimino={piece.tetrimino}
-      rotation={piece.rotation}
-    />
+    <div
+      css={{
+        position: "absolute",
+        left: piece.x * UI.BlockSize,
+        bottom: piece.y * UI.BlockSize,
+      }}
+    >
+      <Piece tetrimino={piece.tetrimino} rotation={piece.rotation} />
+    </div>
   )
 }
 
-function BoardGhostPiece() {
+export function BoardGhostPiece() {
   const ghostPiece = useGameGhostPiece()
   if (!ghostPiece) return null
 
-  const xPosition = ghostPiece.x * blockSize
-  const yPosition = ghostPiece.y * blockSize
-
   return (
-    <Piece
-      position={[xPosition, yPosition, 0]}
-      tetrimino={ghostPiece.tetrimino}
-      rotation={ghostPiece.rotation}
-      opacity={0.5}
-    />
+    <div
+      css={{
+        position: "absolute",
+        left: ghostPiece.x * UI.BlockSize,
+        bottom: ghostPiece.y * UI.BlockSize,
+        opacity: 0.5,
+      }}
+    >
+      <Piece tetrimino={ghostPiece.tetrimino} rotation={ghostPiece.rotation} />
+    </div>
   )
 }
 
-function HoldQueue() {
-  const holdTetrimino = useGameStore((state) => state.holdQueue)
-  const canHold = useGameStore((state) => state.canHold)
-  const boardSize = useBoardSize()
-
-  if (!holdTetrimino) return null
-
+function BoardStatContainer({
+  label,
+  children,
+}: PropsWithChildren<{ label: string }>) {
   return (
-    <Piece
-      position={[-boardSize.width / 2, boardSize.height - blockSize * 4, 1]}
-      tetrimino={holdTetrimino}
-      rotation={0}
-      opacity={canHold ? 1 : 0.5}
-    />
-  )
-}
-
-function NextQueue() {
-  const nextTetriminos = useGameStore((state) => state.nextQueue)
-  const matrix = useGameStore((state) => state.matrix)
-
-  return (
-    <>
-      {nextTetriminos
-        .slice(0, Ruleset.NextQueueSize)
-        .map((tetrimino, index) => (
-          <Piece
-            key={index}
-            position={[
-              (matrix.width * blockSize) / 2 + blockSize * 6,
-              (matrix.height - index * tetrimino.height - 4) * blockSize,
-              1,
-            ]}
-            tetrimino={tetrimino}
-            rotation={0}
-          />
-        ))}
-    </>
+    <div
+      css={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "start",
+        gap: "8px",
+        height: "min-content",
+        width: "100px",
+      }}
+    >
+      <span>{label}</span>
+      {children}
+    </div>
   )
 }
 
 export function Board() {
-  useEngine()
-
-  const boardSize = useBoardSize()
+  const { width, height } = useGameStore((state) => state.matrix)
 
   return (
-    <group
-      position={[
-        -boardSize.width / 2 + blockSize / 2,
-        -boardSize.height / 2 + blockSize / 2,
-        1,
-      ]}
+    <div
+      css={{
+        display: "flex",
+        gap: "24px",
+      }}
     >
-      <BoardMatrix />
-      <BoardGhostPiece />
-      <BoardPiece />
-      <HoldQueue />
-      <NextQueue />
-    </group>
+      <BoardStatContainer label="Hold">
+        <HoldQueue />
+      </BoardStatContainer>
+      <div
+        css={{
+          position: "relative",
+          width: width * UI.BlockSize,
+          height: height * UI.BlockSize,
+        }}
+      >
+        <BoardMatrix />
+        <BoardPiece />
+        <BoardGhostPiece />
+      </div>
+      <BoardStatContainer label="Next">
+        <NextQueue />
+      </BoardStatContainer>
+    </div>
   )
 }

@@ -125,7 +125,8 @@ function holdPiece() {
 }
 
 function checkPattern() {
-  const { matrix, setHitList } = getGameState()
+  const { matrix, completedLines, setHitList, setCompletedLines } =
+    getGameState()
 
   const blocksPerRow = new Map<number, Threetris.Block[]>()
 
@@ -142,6 +143,7 @@ function checkPattern() {
   const hitList = fullRows.flatMap(([, blocks]) => blocks)
 
   setHitList(hitList)
+  setCompletedLines(completedLines + fullRows.length)
 }
 
 function eliminateBlocks() {
@@ -173,10 +175,16 @@ export function useEngine() {
       matrix,
       fallingTime,
       lockDownTime,
+      elapsedTime,
       setPiece,
       setFallingTime,
       setLockDownTime,
+      setElapsedTime,
     } = getGameState()
+
+    if (hitList.length) {
+      eliminateBlocks()
+    }
 
     if (!piece) {
       spawnPiece(getNextPiece())
@@ -208,9 +216,7 @@ export function useEngine() {
       setLockDownTime(Ruleset.LockDownDelay)
     }
 
-    if (hitList.length) {
-      eliminateBlocks()
-    }
+    setElapsedTime(elapsedTime + delta)
   })
 
   useActionPress(

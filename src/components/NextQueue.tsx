@@ -13,7 +13,7 @@ export function NextQueue() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        width: `${UI.BlockSize * 3}px`,
+        width: `${UI.BlockSize * 4}px`,
         height: "100%",
       }}
     >

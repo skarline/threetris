@@ -16,7 +16,7 @@ const ColorMap = [
 export function Block({ type }: BlockProps) {
   return (
     <div
-      css={{
+      style={{
         backgroundColor: ColorMap[type],
         width: "100%",
         height: "100%",

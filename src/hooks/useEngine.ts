@@ -1,5 +1,5 @@
-import { useFrame } from "@/hooks/useFrame"
 import { useRef } from "react"
+import { useAnimationFrame } from "motion/react"
 
 import { getGameState } from "@/stores/game"
 import { useActionPress } from "@/hooks/input"
@@ -15,8 +15,8 @@ import { Ruleset } from "@/constants/ruleset"
 import { Tetriminos } from "@/constants/tetriminos"
 import { IWallKickOffsets, JLSTZWallKickOffsets } from "@/constants/rotation"
 
-const moveRepeatDelay = 0.3
-const moveRepeatInterval = 0.05
+const moveRepeatDelay = 100
+const moveRepeatInterval = 20
 
 function spawnPiece(tetrimino: Threetris.Tetrimino) {
   const { matrix, setPiece } = getGameState()
@@ -89,7 +89,9 @@ function rotateAndCollide(delta: number) {
 
     const offset = (
       tetrimino === Tetriminos.I ? IWallKickOffsets : JLSTZWallKickOffsets
-    ).at(offsetIndex)!
+    ).at(offsetIndex)
+
+    if (!offset) return
 
     for (const [dx, dy] of offset) {
       const testPiece = isClockwise
@@ -130,11 +132,11 @@ function checkPattern() {
 
   const blocksPerRow = new Map<number, Threetris.Block[]>()
 
-  matrix.blocks.forEach((block) => {
+  for (const block of matrix.blocks) {
     const blocks = blocksPerRow.get(block.y) ?? []
     blocks.push(block)
     blocksPerRow.set(block.y, blocks)
-  })
+  }
 
   const fullRows = Array.from(blocksPerRow.entries()).filter(
     ([, blocks]) => blocks.length === matrix.width,
@@ -166,7 +168,7 @@ export function useEngine() {
   const lockingPieceRef = useRef<Threetris.Piece | null>(null)
   const isPlayingRef = useRef(true)
 
-  useFrame((delta) => {
+  useAnimationFrame((_, delta) => {
     if (!isPlayingRef.current) return
 
     const {

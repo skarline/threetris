@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react"
+import type { PropsWithChildren } from "react"
 
 import { UI } from "@/constants/ui"
 import { useGameGhostPiece, useGameStore } from "@/stores/game"
@@ -11,7 +11,7 @@ import { Piece } from "./Piece"
 function Stack({ children }: PropsWithChildren) {
   return (
     <div
-      css={{
+      style={{
         display: "flex",
         flexDirection: "column",
         gap: "1rem",
@@ -42,7 +42,7 @@ function BoardPiece() {
   return (
     <div
       key={String(piece.tetrimino.facings[0])}
-      css={{
+      style={{
         position: "absolute",
         left: piece.x * UI.BlockSize,
         bottom: piece.y * UI.BlockSize,
@@ -60,7 +60,7 @@ export function BoardGhostPiece() {
 
   return (
     <div
-      css={{
+      style={{
         position: "absolute",
         left: ghostPiece.x * UI.BlockSize,
         bottom: ghostPiece.y * UI.BlockSize,
@@ -73,10 +73,10 @@ export function BoardGhostPiece() {
 }
 
 function BoardElapsedTime() {
-  const elapsedTime = useGameStore((state) => state.elapsedTime)
+  const elapsedTimeSeconds = useGameStore((state) => Math.floor(state.elapsedTime / 1000))
 
-  const formattedSeconds = String(Math.floor(elapsedTime % 60)).padStart(2, "0")
-  const formattedMinutes = String(Math.floor(elapsedTime / 60)).padStart(2, "0")
+  const formattedSeconds = String(Math.floor(elapsedTimeSeconds % 60)).padStart(2, "0")
+  const formattedMinutes = String(Math.floor(elapsedTimeSeconds / 60)).padStart(2, "0")
 
   return (
     <span>
@@ -109,7 +109,7 @@ function BoardStatContainer({
 }>) {
   return (
     <div
-      css={{
+      style={{
         display: "flex",
         flexDirection: "column",
         alignItems: align,
@@ -119,7 +119,7 @@ function BoardStatContainer({
       }}
     >
       <span
-        css={{
+        style={{
           fontSize: "1rem",
           fontWeight: "bold",
           textTransform: "uppercase",
@@ -135,7 +135,7 @@ function BoardStatContainer({
 export function Board() {
   return (
     <div
-      css={{
+      style={{
         display: "grid",
         gridTemplateColumns: "5em auto 5rem",
         gridTemplateRows: "1fr",
@@ -143,7 +143,7 @@ export function Board() {
       }}
     >
       <div
-        css={{
+        style={{
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
@@ -158,29 +158,29 @@ export function Board() {
         </BoardStatContainer>
       </div>
       <div
-        css={{
+        style={{
           backgroundColor: "black",
           position: "relative",
-          "&::after": {
+        }}
+      >
+        <div style={{ position: "relative" }}>
+          <BoardMatrix />
+          <BoardPiece />
+          <BoardGhostPiece />
+        </div>
+        <div style={{
             position: "absolute",
-            content: "''",
             top: 0,
             left: 0,
             width: "100%",
             height: "100%",
             outline: "0.125em solid white",
             borderRadius: "0.25rem",
-          },
-        }}
-      >
-        <div css={{ position: "relative" }}>
-          <BoardMatrix />
-          <BoardPiece />
-          <BoardGhostPiece />
-        </div>
+          }}
+        />
       </div>
       <div
-        css={{
+        style={{
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",

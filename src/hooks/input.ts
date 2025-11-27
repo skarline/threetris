@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef } from "react"
 
-import { useFrame } from "@/hooks/useFrame"
 import { getAction, getInputState } from "@/stores/input"
 import { ActionMap } from "@/constants/input"
+import { useAnimationFrame } from "motion/react"
 
 function getActionFromKey(key: string) {
   return Object.entries(ActionMap).find(([, keys]) =>
@@ -35,13 +35,13 @@ export function useInput() {
 export function useActionPress(
   actionKey: Threetris.Action,
   callback: () => void,
-  repeatDelay = 0.3,
-  repeatInterval = 0
+  repeatDelay = 300,
+  repeatInterval = 100,
 ) {
   const previousActionRef = useRef<boolean>(false)
   const repeatTimeRef = useRef<number>(0)
 
-  useFrame((delta) => {
+  useAnimationFrame((_, delta) => {
     const action = getAction(actionKey)
 
     const justPressed = action && !previousActionRef.current
@@ -51,7 +51,9 @@ export function useActionPress(
       repeatTimeRef.current = repeatDelay
       callback()
     } else if (isRepeating) {
-      if ((repeatTimeRef.current -= delta) <= 0) {
+      repeatTimeRef.current -= delta
+
+      if (repeatTimeRef.current <= 0) {
         repeatTimeRef.current += repeatInterval
         callback()
       }
@@ -64,7 +66,7 @@ export function useActionPress(
 function useActionRelease(actionKey: Threetris.Action, callback: () => void) {
   const actionRef = useRef<boolean>(false)
 
-  useFrame(() => {
+  useAnimationFrame(() => {
     const action = getInputState().actions[actionKey] ?? false
 
     const justReleased = !action && actionRef.current

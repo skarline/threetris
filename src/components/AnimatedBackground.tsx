@@ -59,7 +59,7 @@ export function AnimatedBackground() {
         p.stroke(100, 100, 100)
         p.noFill()
 
-        range(-lineCount / 2, lineCount / 2).forEach((line) => {
+        for (const line of range(-lineCount / 2, lineCount / 2)) {
           const y = p.height / 2 + line * gap
 
           if (
@@ -70,7 +70,7 @@ export function AnimatedBackground() {
 
           p.beginShape()
 
-          range(p.width).forEach((i) => {
+          for (let i = 0; i < p.width; i++) {
             const x = p.map(i, 0, p.width, -safeMargin, p.width + safeMargin)
 
             const mx = p.map(x + y * skew, 0, p.width, -1, 1)
@@ -79,11 +79,11 @@ export function AnimatedBackground() {
             const noise = p.noise(mx * scale, my * scale, time * 0.1)
             const offset = p.map(noise, 0, 1, -amplitude, amplitude)
 
-            p.curveVertex(x, y + offset + verticalOffset)
-          })
+            p.splineVertex(x, y + offset + verticalOffset)
+          }
 
           p.endShape()
-        })
+        }
 
         time += p.deltaTime / 1000
       }
@@ -97,7 +97,7 @@ export function AnimatedBackground() {
   return (
     <div
       ref={containerRef}
-      css={{
+      style={{
         position: "absolute",
         top: 0,
         left: 0,

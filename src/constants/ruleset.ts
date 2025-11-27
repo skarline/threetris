@@ -1,5 +1,5 @@
 export const Ruleset = {
-  FallingDelay: 1,
-  LockDownDelay: 0.5,
+  FallingDelay: 1000,
+  LockDownDelay: 500,
   NextQueueSize: 3,
 } as const

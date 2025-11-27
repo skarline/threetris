@@ -9,7 +9,7 @@ export function HoldQueue() {
 
   return (
     <div
-      css={{
+      style={{
         opacity: canHold ? 1 : 0.5,
       }}
     >

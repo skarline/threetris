@@ -8,7 +8,7 @@ export function NextQueue() {
 
   return (
     <div
-      css={{
+      style={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

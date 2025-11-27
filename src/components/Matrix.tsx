@@ -1,4 +1,4 @@
-import { HTMLAttributes } from "react"
+import type { HTMLAttributes } from "react"
 
 import { UI } from "@/constants/ui"
 
@@ -10,7 +10,7 @@ export function Matrix({ blocks, width, height, ...rest }: MatrixProps) {
   return (
     <div
       {...rest}
-      css={{
+      style={{
         display: "grid",
         gridTemplateColumns: `repeat(${width}, 1fr)`,
         gridTemplateRows: `repeat(${height}, 1fr)`,
@@ -20,18 +20,18 @@ export function Matrix({ blocks, width, height, ...rest }: MatrixProps) {
         aspectRatio: `${width}/${height}`,
       }}
     >
-      {blocks.map(({ x, y, type }, index) => {
+      {blocks.map(({ x, y, type }) => {
         if (!type) return null
 
         return (
           <div
-            css={{
+            style={{
               gridColumn: x + 1,
               gridRow: height - y,
             }}
-            key={index}
+            key={`${x}-${y}-${type}`}
           >
-            <Block key={index} type={type} />
+            <Block type={type} />
           </div>
         )
       })}
